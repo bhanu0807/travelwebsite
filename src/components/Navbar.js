@@ -3,6 +3,7 @@ import { Button } from './Button';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
+
 function Navbar() {
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
@@ -68,9 +69,18 @@ function Navbar() {
               >
                 Sign Up
               </Link>
+
+              <Link
+                to='/login'
+                className='nav-links-mobile'
+                onClick={closeMobileMenu}
+              >
+                Login
+              </Link>
             </li>
           </ul>
           {button && <Button buttonStyle='btn--outline'>SIGN UP</Button>}
+          {button && <Button buttonStyle='btn--outline'>Login</Button>}
         </div>
       </nav>
     </>

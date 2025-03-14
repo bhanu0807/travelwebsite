@@ -1,60 +1,59 @@
-// import React from 'react';
-// import '../../App.css';
+import { useState } from "react";
 
-// export default function SignUp() {
-//   return <h1 className='sign-up'>LIKE & SUBSCRIBE</h1>;
-// }
-
-import React, { useState } from "react";
-import axios from "axios";
-
-function SignUp() {
+const SignUp = () => {
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
+    email: "", 
     phonenumber: "",
-    email: "",
     password: "",
-    profile_picture: null,
   });
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(""); // Error state
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleFileChange = (e) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      profile_picture: e.target.files[0],
-    }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const formDataToSend = new FormData();
-    for (let key in formData) {
-      formDataToSend.append(key, formData[key]);
+    // Basic client-side validation
+    if (formData.password.length < 6) {
+      setLoading(false);
+      setError("Password must be at least 6 characters long.");
+      return;
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/signup", formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("http://localhost:8000/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-      alert(response.data);
+
+      const data = await response.text();
+      if (response.ok) {
+        alert("User registered successfully!");
+        setFormData({ firstname: "", lastname: "",  email: "", phonenumber: "", password: "" });
+      } else {
+        setError(data);
+      }
     } catch (error) {
-      console.error("There was an error!", error);
-      alert("Error signing up!");
+      console.error("Error:", error);
+      setError("Signup failed! Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      <h2>Create an Account</h2>
+      <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -72,28 +71,19 @@ function SignUp() {
           onChange={handleChange}
           required
         />
-        <select
-          name="country_code"
+                <input
+          type="email"  // Use email type for better validation
+          name="email"
+          placeholder="Email"
+          value={formData.email}
           onChange={handleChange}
           required
-        >
-          <option value="+1">+1 (USA)</option>
-          <option value="+91">+91 (India)</option>
-          <option value="+44">+44 (UK)</option>
-        </select>
+        />
         <input
           type="text"
           name="phonenumber"
           placeholder="Phone Number"
           value={formData.phonenumber}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
           onChange={handleChange}
           required
         />
@@ -105,15 +95,12 @@ function SignUp() {
           onChange={handleChange}
           required
         />
-        <input
-          type="file"
-          name="profile_picture"
-          onChange={handleFileChange}
-        />
-        <button type="submit">Sign Up</button>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit" disabled={loading}>Sign Up</button>
+        {loading && <p>Loading...</p>}
       </form>
     </div>
   );
-}
+};
 
 export default SignUp;

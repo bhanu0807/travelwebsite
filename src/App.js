@@ -11,6 +11,7 @@ import ImgSecond from './components/pages/ImgSecond';
 import ImgThird from './components/pages/ImgThird';
 import ImgFourth from './components/pages/ImgFourth';
 import ImgFive from './components/pages/ImgFive';
+import Login from './components/pages/Login';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path='/ImgThird' element={<ImgThird/>} />
           <Route path='/ImgFourth' element={<ImgFourth/>} />
           <Route path='/ImgFive' element={<ImgFive/>} />
+          <Route path='/Login' element={<Login/>} />
         </Routes>
       </Router>
     </>
